@@ -100,7 +100,9 @@
 ## Examples
 
 This command line
+```
 ./fpg -m s -N 5 -d 300 -L 400 -p 5 | gnuplot -e "set term png; set output '../docs/images/N5_d300_L400_p5.png'; plot '-' with lines linestyle 1"
+```
 
 will produce the following image
 ![N5_d300_L400_p5.png](docs/images/N5_d300_L400_p5.png)
