@@ -62,14 +62,17 @@
 
  ### Sim gnuplot mode
   is invoked with -m s. In this mode, a list of coordinates is output which show the filament
-  path. The coordinates are constrained height 360. Any path with coordinates outside
+  path. The parameters d, L, N are mandatory; p, a, s and c are optional and have sane
+  default values.
+  The coordinates are constrained by a height of 360. Any path with coordinates outside
   the vertical limits are wrapped around. This produces a map showing the filament path
-  if the produced tube was developed. See docs/Dalibor_et_al.pdf for examples and detailed
+  if the produced tube was developed flat. See docs/Dalibor_et_al.pdf for examples and detailed
   explanation.
 
  ### G-code mode
-   isinvoked with -m g. In this mode, G-code is generated for the filament winding machine.
-   The path is not wrapped around. The filament winder is assumed to be setup in the following way:
+  is invoked with -m g. In this mode, G-code is generated for the filament winding machine.
+  The same parameters are required as in Sim gnuplot mode.
+  The path is not wrapped around. The filament winder is assumed to be setup in the following way:
    - X axis is along the length of the tube being wound. Positive is right. Zero is set
      at the leftmost part of the tube. There must however be space for the dwell arcs, thus
      negative X coordinates will be produced.
@@ -89,7 +92,7 @@
  - test the physical device with a uCNC controller
  - add comments between graphical elements produced (lines and dwells) to ease post-processing
  - add options for feed rate generation
- - add a hoop mode for widing perpendicular to tube axis
+ - add a hoop mode for winding perpendicular to tube axis
  - include fpg into the firmware of the filament winding device, including a simple
    text UI, to be able to generate windings autonomously without a PC.
 

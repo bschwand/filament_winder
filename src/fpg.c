@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
 
   run_mode_t run_mode = INVALID;
 
-  wind_def_t params = {0, 0, 0, 0, 0, 0, 0, 5};
+  wind_def_t params = {0, 0, 0, 45, 0, 2, 0, 5, 6}; // sane default values
 
   while (1) {
     int this_option_optind = optind ? optind : 1;
