@@ -96,3 +96,16 @@
  - include fpg into the firmware of the filament winding device, including a simple
    text UI, to be able to generate windings autonomously without a PC.
 
+
+## Examples
+
+This command line
+./fpg -m s -N 5 -d 300 -L 400 -p 5 | gnuplot -e "set term png; set output '../docs/images/N5_d300_L400_p5.png'; plot '-' with lines linestyle 1"
+
+will produce the following image
+![N5_d300_L400_p5.png](docs/images/N5_d300_L400_p5.png)
+
+To illustrate how skip works, the following use the same pattern but a skip of 1, resp. 2
+![N5_d300_L400_p5_s1.png](docs/images/N5_d300_L400_p5_s1.png)
+
+![N5_d300_L400_p5_s2.png](docs/images/N5_d300_L400_p5_s2.png)
