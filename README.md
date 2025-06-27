@@ -66,7 +66,7 @@
   default values.
   The coordinates are constrained by a height of 360. Any path with coordinates outside
   the vertical limits are wrapped around. This produces a map showing the filament path
-  if the produced tube was developed flat. See [Dalibor et al.](docs/Dalibor_et_al.pdf)
+  if the produced tube was developed flat. See [Dalibor et al.](docs/Dalibor_et_al.pdf) Source link:[Dalibor et al.](https://www.researchgate.net/publication/337445146_A_geometric_approach_for_filament_winding_pattern_generation_and_study_of_the_influence_of_the_slippage_coefficient)
   for examples and detailed explanation of terms.
 
  ### G-code mode
