@@ -1,4 +1,4 @@
-# Filement Winder path generator (fpg) and device
+# Filament Winder path generator (fpg) and device
 
 ## License
   Published under the AGPLv3 license. Please see LICENSE.txt
@@ -38,21 +38,21 @@
 ## Usage
 
    Command-line arguments:
-   -m : mode of operation, one of i, s, g (Information, Sim gnuplot, G-code)
-   -w : filament tow width in mm
-   -d : mandrel diameter in mm
-   -L : tube length in mm
-   -a : winding angle in degrees. o would be straight along the tube, 90 would be hoop mode
-   -N : tow count along the circumference
-   -p : pattern to use. Currently only prime numbers >=2 are supported.
-   -s : skip count. zero by default, must be < pattern
-   -r : range. How many extra tow_count values to output when running in information mode
-   -c : number of line segments to use for the dwell arcs.
-   -t : test number. for debugging/testing purposes
-   -v : currently enables debugging logs. May be used in the future to optionally add tags
-        in the generated path, to ease post-processing.
+   - -m : mode of operation, one of i, s, g (Information, Sim gnuplot, G-code)
+   - -w : filament tow width in mm
+   - -d : mandrel diameter in mm
+   - -L : tube length in mm
+   - -a : winding angle in degrees. o would be straight along the tube, 90 would be hoop mode
+   - -N : tow count along the circumference
+   - -p : pattern to use. Currently only prime numbers >=2 are supported.
+   - -s : skip count. zero by default, must be < pattern
+   - -r : range. How many extra tow_count values to output when running in information mode
+   - -c : number of line segments to use for the dwell arcs.
+   - -t : test number. for debugging/testing purposes
+   - -v : currently enables debugging logs. May be used in the future to optionally add tags
+          in the generated path, to ease post-processing.
 
- fpg runs in 3 distinct modes:
+## fpg modes of operation
 
  ### Information mode
   is invoked with -m i. In this mode, the parameters w, d, L, a are mandatory and r optional.
