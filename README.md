@@ -66,8 +66,8 @@
   default values.
   The coordinates are constrained by a height of 360. Any path with coordinates outside
   the vertical limits are wrapped around. This produces a map showing the filament path
-  if the produced tube was developed flat. See docs/Dalibor_et_al.pdf for examples and detailed
-  explanation.
+  if the produced tube was developed flat. See [Dalibor et al.](docs/Dalibor_et_al.pdf)
+  for examples and detailed explanation of terms.
 
  ### G-code mode
   is invoked with -m g. In this mode, G-code is generated for the filament winding machine.
