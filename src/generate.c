@@ -167,7 +167,8 @@ void print_patterns(int tow_count){
 
 void generate_information(wind_def_t* params){
   float circumference = M_PI * params->diameter;
-  float N = ceil(circumference / params->tow_width);
+  float projected_tow_width = params->tow_width / cos(to_radians(params->angle));
+  float N = ceil(circumference / projected_tow_width);
 
   DEBUG_LOG("N: %f\n", N);
 
@@ -175,7 +176,7 @@ void generate_information(wind_def_t* params){
   printf("Tow count\toverlap\t patterns\n");
   for(tows = N; tows < (N + params->range); tows++){
     printf("\t%4d\t%5.2f %%\t ", tows,
-           (((float)(tows * params->tow_width)) / circumference - 1.0) * 100.0
+           (((float)(tows * projected_tow_width)) / circumference - 1.0) * 100.0
            );
 
     print_patterns(tows);

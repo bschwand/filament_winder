@@ -42,7 +42,7 @@
    - -w : filament tow width in mm
    - -d : mandrel diameter in mm
    - -L : tube length in mm
-   - -a : winding angle in degrees. o would be straight along the tube, 90 would be hoop mode
+   - -a : winding angle in degrees. 0 would be straight along the tube, 90 would be hoop mode
    - -N : tow count along the circumference
    - -p : pattern to use. Currently only prime numbers >=2 are supported.
    - -s : skip count. zero by default, must be < pattern
