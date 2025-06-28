@@ -10,10 +10,19 @@
  ### Software
 
  - Generates G-Code meant to drive a 3-axis filament winder machine
+
  - Can also output coordinates wrapped around the Y axis, for plotting
-   a graph (with GNUplot) to visually validate the expected winding pattern.
- - Generates information to choose best winding tow count, pattern and skip number
-   depending on desired tube diameter, filament tow width and winding angle.
+   a graph (with GNUplot for example) to visually validate the
+   expected winding pattern.
+
+ - GenerateS information to choose best winding tow count, pattern and
+   skip number depending on desired tube diameter, filament tow width
+   and winding angle.
+
+ - An essentIal design goal of the software is to be embeddable.
+   Therefore it is fast, efficient, low-memory footprint and does not
+   rely on bloated runtimes or VM, just straight C and no external
+   libraries.
 
  ### Hardware
 
@@ -103,6 +112,8 @@
  - add a hoop mode for winding perpendicular to tube axis
  - include fpg into the firmware of the filament winding device, including a simple
    text UI, to be able to generate windings autonomously without a PC.
+ - convert simulation mode to not use a recursive function (not a priority since the simulation
+   mode is meant to be run on a host PC)
 
 
 ## Examples
