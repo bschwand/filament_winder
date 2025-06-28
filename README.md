@@ -10,15 +10,12 @@
  ### Software
 
  - Generates G-Code meant to drive a 3-axis filament winder machine
-
  - Can also output coordinates wrapped around the Y axis, for plotting
    a graph (with GNUplot for example) to visually validate the
    expected winding pattern.
-
- - GenerateS information to choose best winding tow count, pattern and
+ - Generates information to choose best winding tow count, pattern and
    skip number depending on desired tube diameter, filament tow width
    and winding angle.
-
  - An essentIal design goal of the software is to be embeddable.
    Therefore it is fast, efficient, low-memory footprint and does not
    rely on bloated runtimes or VM, just straight C and no external
@@ -28,7 +25,6 @@
 
  - controlled by uCNC controller or any 3D-printer type controller that understands G-Code.
    Might need some customization for end stops and homing.
-
  - made from on-hand free junk, salvaged parts and 3D printed parts. Inspired and some parts
    reused from [The Contraption](https://www.reilley.net/winder/)
 
