@@ -33,7 +33,9 @@
 ## Compilation of fpg
 
   just use gcc and compile all .c files into the fpg executable
+```
   gcc -o fpg *.c
+```
 
 ## Usage
 
@@ -86,6 +88,12 @@
      negative values corresponds to CCW.
      The tow winding angle as specified by the -a command-line argument, is the angle between
      the horizontal (i.e. along the axis of the tube being wound) and the filament.
+
+  If you want instead to wind the filament on top of the mandrel, this can be accomplished
+  by swapping direction of the Y axis and Z axis. The generated path is the same
+  but the device needs to be configured so that positive Y coordinates make the mandrel
+  roll away from the head, and positive values correspond to Z turning CCW and negative
+  turning CW. (this was not tested yet though but it should be correct)
 
 ## Roadmap
 
