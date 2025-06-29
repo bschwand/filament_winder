@@ -16,7 +16,7 @@
  - Generates information to choose best winding tow count, pattern and
    skip number depending on desired tube diameter, filament tow width
    and winding angle.
- - An essentIal design goal of the software is to be embeddable.
+ - An essential design goal of the software is to be embeddable.
    Therefore it is fast, efficient, low-memory footprint and does not
    rely on bloated runtimes or VM, just straight C and no external
    libraries.
@@ -30,7 +30,7 @@
 
 ## Limitations
 
- - does not generate a preamble or speed/feed rates at this time, only path segments.
+ - does not generate a preamble at this time, only path segments with proper feedrate.
  - currently only generates path for one layer. Since each layer has a thickness altering
    the mandrel diameter, it is recommended to create a path for each layer with appropriate
    tow count, pattern and skip, then concatenate them.
@@ -51,10 +51,12 @@
    - -L : tube length in mm
    - -a : winding angle in degrees. 0 would be straight along the tube, 90 would be hoop mode
    - -N : tow count along the circumference
-   - -p : pattern to use. Currently only prime numbers >=2 are supported.
+   - -p : pattern to use. Currently only prime numbers >=2 are supported and < than embedded max. (see source code)
    - -s : skip count. zero by default, must be < pattern
    - -r : range. How many extra tow_count values to output when running in information mode
    - -c : number of line segments to use for the dwell arcs.
+   - -f : feedrate for dwell line segments
+   - -F : feedrate for straight (winding) line segments
    - -t : test number. for debugging/testing purposes
    - -v : currently enables debugging logs. May be used in the future to optionally add tags
           in the generated path, to ease post-processing.

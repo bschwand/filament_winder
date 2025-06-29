@@ -40,6 +40,8 @@ typedef struct {
   int skip;
   int range;
   int segment_count;
+  float dwell_feedrate;
+  float wind_feedrate;
 } wind_def_t;
 
 void generate_information(wind_def_t* params);

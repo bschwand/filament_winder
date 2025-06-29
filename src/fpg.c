@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
 
   run_mode_t run_mode = INVALID;
 
-  wind_def_t params = {0, 0, 0, 45, 0, 2, 0, 5, 6}; // sane default values
+  wind_def_t params = {0, 0, 0, 45, 0, 2, 0, 5, 6, 500, 2000}; // sane default values
 
   while (1) {
     int this_option_optind = optind ? optind : 1;
@@ -62,13 +62,17 @@ int main(int argc, char *argv[]) {
       {"range",     required_argument, 0, 'r' },
       // number of line segments in one dwell arc
       {"segment_count",     required_argument, 0, 'c' },
+      // dwell feedrate in mm/minute
+      {"dwell_feedrate",     required_argument, 0, 'f' },
+      // number of line segments in one dwell arc
+      {"wind_feedrate",     required_argument, 0, 'F' },
       // for test and debugging, run the test number requested
       {"test",      required_argument, 0, 't' }, // integer
       {"verbose",   no_argument, 0, 'v' },
       {0,           0,                 0,  0  }
     };
 
-    c = getopt_long(argc, argv, "m:w:d:L:a:N:p:s:vr:t:c:",
+    c = getopt_long(argc, argv, "m:w:d:L:a:N:p:s:vr:t:c:f:F:",
                     long_options, &option_index);
     if (c == -1)
       break;
@@ -177,6 +181,24 @@ int main(int argc, char *argv[]) {
       }
       DEBUG_LOG("option segment_count with value '%s'\n", optarg);
       DEBUG_LOG("segment_count : %d\n", params.segment_count);
+      break;
+
+    case 'f':
+      if(!(params.dwell_feedrate = atof(optarg))){
+        printf("dwell_feedrate is invalid!\n");
+        exit(1);
+      }
+      DEBUG_LOG("option dwell_feedrate with value '%s'\n", optarg);
+      DEBUG_LOG("dwell_feedrate : %d\n", params.dwell_feedrate);
+      break;
+
+    case 'F':
+      if(!(params.wind_feedrate = atof(optarg))){
+        printf("wind_feedrate is invalid!\n");
+        exit(1);
+      }
+      DEBUG_LOG("option wind_feedrate with value '%s'\n", optarg);
+      DEBUG_LOG("wind_feedrate : %d\n", params.wind_feedrate);
       break;
 
     case 't':

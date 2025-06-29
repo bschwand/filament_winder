@@ -45,10 +45,26 @@ float complement_to_90(float angle){
     return (90.0 - angle);
 }
 
+// The controller computes the feedrate based on X/Y unit being mm,
+// however Y is actually an angle in degrees, therefore the arc length depends
+// on the mandrel diameter. compute a correction factor.
+// in effect, for a given feedrate, if we have a big diameter the actual peripheral
+// speed would be much higher (in the Y direction) than requested,
+// and in such case we need to reduce the real feedrate
+float feedrate_correction_factor(float start_x, float start_angle,
+                                 float end_x, float end_angle,
+                                 float diameter){
+  float apparent_arclength = sqrt(pow(start_x - end_x, 2) + pow(start_angle - end_angle, 2));
+  float real_arclength = sqrt(pow(start_x - end_x,2) +
+                              pow((M_PI * diameter / 360.0) * (start_angle - end_angle), 2));
+  return (apparent_arclength / real_arclength);
+}
+
 void print_line(run_mode_t run_mode,
                 float start_x, float start_angle,
                 float end_x, float end_angle, // angle here is actually Y coordinate in degrees
-                float head_angle){ // head_angle here is actually Z coord in degrees, zero is up
+                float head_angle,  // head_angle here is actually Z coord in degrees, zero is up
+                float feedrate, float diameter){
 
   float cut_height = 360;
   DEBUG_LOG("%f %f %f %f\n", start_x, start_angle, end_x, end_angle);
@@ -78,7 +94,7 @@ void print_line(run_mode_t run_mode,
       start_x += end_x_step;
       start_angle += (360.0 - (start_i + start_f));
 
-      print_line(run_mode, start_x, start_angle, end_x, end_angle, head_angle);
+      print_line(run_mode, start_x, start_angle, end_x, end_angle, head_angle, feedrate, diameter);
 
     }else{
       // simple case, start and end are inside the 360 band, no wraparound
@@ -87,7 +103,10 @@ void print_line(run_mode_t run_mode,
   }else{
     // turn the head first, then do the line. Otherwise it would interpolate head rotation
     // but we want the head pointed in the correct angle for the whole move, so do it first
-    printf("G1 Z%f\nG1 X%f Y%f\n", head_angle, end_x, end_angle);
+    printf("G1 Z%f\nG1 F%f X%f Y%f\n",
+           head_angle,
+           feedrate * feedrate_correction_factor(start_x, start_angle, end_x, end_angle, diameter),
+           end_x, end_angle);
   }
 
 }
@@ -95,7 +114,7 @@ void print_line(run_mode_t run_mode,
 void print_dwell(run_mode_t run_mode,
                  float start_x,
                  float start_angle, float end_angle, float winding_angle,
-                 int segments, float diameter,
+                 int segments, float feedrate, float diameter,
                  bool going_left){ // if true the dwell is a half circle on the left
 
   float theta,   // half angle of the dwell arc on the plane of the developed cylinder
@@ -143,7 +162,7 @@ void print_dwell(run_mode_t run_mode,
     DEBUG_LOG("Segx: %f Segy:%f\n", Segx, Segy);
 
     print_line(run_mode, prevSegx, prevSegy, Segx, Segy,
-               (going_left) ? curr_theta : -curr_theta);
+               (going_left) ? curr_theta : -curr_theta, feedrate, diameter);
     prevSegx = Segx;
     prevSegy = Segy;
   }
@@ -153,7 +172,7 @@ void print_dwell(run_mode_t run_mode,
   // but our z axis is setup with zero point to top, + CW and - CCW
   print_line(run_mode, prevSegx, prevSegy, start_x, end_angle,
              (going_left) ? complement_to_90(winding_angle)
-             : -complement_to_90(winding_angle));
+             : -complement_to_90(winding_angle), feedrate, diameter);
 }
 
 // prints possible patterns for tow_count, i.e. divisors (for now just prime divisors)
@@ -237,14 +256,17 @@ int generate_path(run_mode_t run_mode, wind_def_t* params){
   for(current_cycle = 0; current_cycle < cycle_count ; current_cycle++){
     for(current_circuit = 0; current_circuit < params->pattern; current_circuit++){
       print_line(run_mode, 0, current_angle, params->length, current_angle + gamma,
-                 complement_to_90(params->angle));
+                 complement_to_90(params->angle), params->wind_feedrate,
+                 params->diameter);
       current_angle += gamma;
       print_dwell(run_mode,
                   params->length, current_angle, current_angle + dw,
-                  params->angle, params->segment_count, params->diameter, false);
+                  params->angle, params->segment_count,
+                  params->dwell_feedrate, params->diameter, false);
       current_angle += dw;
       print_line(run_mode, params->length, current_angle, 0, current_angle + gamma,
-                 -complement_to_90(params->angle));
+                 -complement_to_90(params->angle), params->wind_feedrate,
+                 params->diameter);
       current_angle += gamma;
 
       dw_end_angle = current_angle + dw;
@@ -254,7 +276,8 @@ int generate_path(run_mode_t run_mode, wind_def_t* params){
 
       print_dwell(run_mode,
                   0, current_angle, dw_end_angle,
-                  params->angle, params->segment_count, params->diameter, true);
+                  params->angle, params->segment_count,
+                  params->dwell_feedrate, params->diameter, true);
 
       current_angle = dw_end_angle;
     }
@@ -266,58 +289,58 @@ int generate_path(run_mode_t run_mode, wind_def_t* params){
 void run_test(int test_num){
   switch(test_num){
   case 1:
-    print_line(SIM_GNUPLOT, 100, 0, 0, 45, 45);
+    print_line(SIM_GNUPLOT, 100, 0, 0, 45, 45, 1000, 100);
     break;
   case 2:
-    print_line(SIM_GNUPLOT, 0, 0, 100, 45, 45);
+    print_line(SIM_GNUPLOT, 0, 0, 100, 45, 45, 1000, 100);
     break;
   case 3:
-    print_line(SIM_GNUPLOT, 0, 0, 100, 360, 45);
+    print_line(SIM_GNUPLOT, 0, 0, 100, 360, 45, 1000, 100);
     break;
   case 4:
-    print_line(SIM_GNUPLOT, 0, 0, 100, 365, 45);
+    print_line(SIM_GNUPLOT, 0, 0, 100, 365, 45, 1000, 100);
     break;
   case 5:
-    print_line(SIM_GNUPLOT, 0, 180, 100, 375, 45);
+    print_line(SIM_GNUPLOT, 0, 180, 100, 375, 45, 1000, 100);
     break;
   case 6:
-    print_line(SIM_GNUPLOT, 0, 460, 100, 620, 45);
+    print_line(SIM_GNUPLOT, 0, 460, 100, 620, 45, 1000, 100);
     break;
   case 7:
-    print_line(SIM_GNUPLOT, 0, 180, 100, 685, 45);
+    print_line(SIM_GNUPLOT, 0, 180, 100, 685, 45, 1000, 100);
     break;
   case 8:
-    print_line(SIM_GNUPLOT, 100, 180, 0, 685, 45);
+    print_line(SIM_GNUPLOT, 100, 180, 0, 685, 45, 1000, 100);
     break;
   case 9:
-    print_line(SIM_GNUPLOT, 40, 180, 100, 685, 45);
+    print_line(SIM_GNUPLOT, 40, 180, 100, 685, 45, 1000, 100);
     break;
   case 10:
-    print_line(SIM_GNUPLOT, 0, 0, 1000, 965, 45);
+    print_line(SIM_GNUPLOT, 0, 0, 1000, 965, 45, 1000, 100);
     break;
   case 11:
-    print_line(SIM_GNUPLOT, 600, 180, 100, 1865, 45);
+    print_line(SIM_GNUPLOT, 600, 180, 100, 1865, 45, 1000, 100);
     break;
   case 12:
-    print_dwell( SIM_GNUPLOT, 0, 100, 250, 45, 12, 100, true);
+    print_dwell( SIM_GNUPLOT, 0, 100, 250, 45, 12, 1000, 100, true);
     break;
   case 13:
-    print_dwell( SIM_GNUPLOT, 100, 100, 250, 45, 12, 100, false);
+    print_dwell( SIM_GNUPLOT, 100, 100, 250, 45, 12, 1000, 100, false);
     break;
   case 14:
-    print_dwell( SIM_GNUPLOT, 0, 250, 500, 45, 12, 100, true);
+    print_dwell( SIM_GNUPLOT, 0, 250, 500, 45, 12, 1000, 100, true);
     break;
   case 15:
-    print_dwell( SIM_GNUPLOT, 100, 250, 500, 45, 12, 100, false);
+    print_dwell( SIM_GNUPLOT, 100, 250, 500, 45, 12, 1000, 100, false);
     break;
   case 16:
-    print_dwell( SIM_GNUPLOT, 0, 250, 1500, 45, 24, 100, true);
+    print_dwell( SIM_GNUPLOT, 0, 250, 1500, 45, 24, 1000, 100, true);
     break;
   case 17:
-    print_dwell( SIM_GNUPLOT, 100, 250, 1500, 45, 24, 100, false);
+    print_dwell( SIM_GNUPLOT, 100, 250, 1500, 45, 24, 1000, 100, false);
     break;
   case 18:
-    print_dwell( SIM_GNUPLOT, 0, 100, 250, 45, 12, 150, true);
+    print_dwell( SIM_GNUPLOT, 0, 100, 250, 45, 12, 1000, 150, true);
     break;
   }
 }
